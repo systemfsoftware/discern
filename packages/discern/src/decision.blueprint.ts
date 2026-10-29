@@ -25,10 +25,11 @@ import { DecisionIdCollisionError } from './DiscernError.schema.js'
 import type { Answers, LeafOptions, NodeCore, Pattern, PatternRefusal } from './pattern.blueprint.js'
 import { distinctFirstById, notPattern, semanticLeaf } from './pattern.blueprint.js'
 import { Probability } from './Route.schema.js'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 import { matched, missed, type PatternResult, uncertain } from './Verdict.schema.js'
 
 /** Any Effect decision kind. */
-export type AnyDecision = Decision.Any
+export type AnyDecision = SupportedDecision
 
 /** The validated answer a decision of kind `D` produces. */
 export type Answer<D extends AnyDecision> = D extends Decision.Classify<infer Label>
@@ -194,7 +195,7 @@ export type DecisionNode<
 
 type AnyNode = DecisionNode<never, AnyDecision, Schema.Constraint | undefined>
 
-const asAnyDecision = <D extends AnyDecision>(decision: D): Decision.Any => decision
+const asAnyDecision = <D extends AnyDecision>(decision: D): SupportedDecision => decision
 
 /**
  * The per-node answer check for one decision kind. The check decodes the batch
@@ -726,8 +727,8 @@ export const openClassifyOn =
 // Observation
 // -------------------------------------------------------------------------------------------------
 
-const recordDecisions = (nodes: ReadonlyArray<NodeCore>): Record<string, Decision.Any> => {
-  const decisions: Record<string, Decision.Any> = {}
+const recordDecisions = (nodes: ReadonlyArray<NodeCore>): Record<string, SupportedDecision> => {
+  const decisions: Record<string, SupportedDecision> = {}
   for (const node of nodes) decisions[node.id] = node.decision
   return decisions
 }
@@ -742,7 +743,7 @@ const collidesWith = (node: NodeCore) => (other: NodeCore): boolean =>
  */
 const decisionsOf = (
   nodes: ReadonlyArray<NodeCore>,
-): Result.Result<Record<string, Decision.Any>, DecisionIdCollisionError> =>
+): Result.Result<Record<string, SupportedDecision>, DecisionIdCollisionError> =>
   Option.match(Arr.findFirst(nodes, (node) => Option.isSome(Arr.findFirst(nodes, collidesWith(node)))), {
     onSome: (node) => Result.fail(new DecisionIdCollisionError({ decisionId: node.id })),
     onNone: () => Result.succeed(recordDecisions(distinctFirstById(nodes))),

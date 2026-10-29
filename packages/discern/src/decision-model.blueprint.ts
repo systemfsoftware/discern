@@ -20,6 +20,7 @@ import { Observation, Observations, ProviderAnswer } from './Observation.schema.
 import { CurrentRegion } from './region.service.js'
 import { replayObservations } from './replay-provider.cell.js'
 import type { RecordingMissing } from './select-observation-source.workflow.js'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 
 export const DiscernMethod = {
   unavailable: 'unavailable',
@@ -78,12 +79,12 @@ export interface ObservationSplit {
   /** The recorded answers, keyed by decision id. */
   readonly hits: Readonly<Record<string, ProviderAnswer>>
   /** The decisions with no recorded answer, keyed by decision id. */
-  readonly missingDecisions: Readonly<Record<string, Decision.Any>>
+  readonly missingDecisions: Readonly<Record<string, SupportedDecision>>
 }
 
 interface Placement {
   readonly id: string
-  readonly decision: Decision.Any
+  readonly decision: SupportedDecision
   readonly recorded: Observation | undefined
 }
 
@@ -91,7 +92,7 @@ const isRecorded = (placement: Placement): placement is Placement & { readonly r
   placement.recorded !== undefined
 
 const placementsOf = (
-  decisions: Readonly<Record<string, Decision.Any>>,
+  decisions: Readonly<Record<string, SupportedDecision>>,
   state: Schema.Json,
   lookup: ObservationStore | undefined,
 ): Effect.Effect<ReadonlyArray<Placement>> =>
@@ -107,7 +108,7 @@ const placementsOf = (
       })))
 
 const splitObservations = (
-  decisions: Readonly<Record<string, Decision.Any>>,
+  decisions: Readonly<Record<string, SupportedDecision>>,
   state: Schema.Json,
   lookup: ObservationStore | undefined,
 ): Effect.Effect<ObservationSplit> =>
@@ -121,13 +122,13 @@ const splitObservations = (
     missingDecisions: Object.fromEntries(
       placements
         .filter((placement) => !isRecorded(placement))
-        .map((placement): readonly [string, Decision.Any] => [placement.id, placement.decision]),
+        .map((placement): readonly [string, SupportedDecision] => [placement.id, placement.decision]),
     ),
   }))
 
 const observationOf = (
   decisionId: string,
-  decision: Decision.Any,
+  decision: SupportedDecision,
   regionPath: ReadonlyArray<string>,
   answer: ProviderAnswer,
 ): Observation =>
@@ -141,7 +142,7 @@ const observationOf = (
 
 const observedAnswerOf = (answer: DecisionModel.ProviderAnswer): Effect.Effect<ProviderAnswer, AiError.AiError> =>
   Effect.mapError(
-    Effect.fromResult(Schema.decodeResult(ProviderAnswer)(answer)),
+    Effect.fromResult(Schema.decodeUnknownResult(ProviderAnswer)(answer)),
     (issue) =>
       AiError.make({
         module: 'Discern',
@@ -152,7 +153,7 @@ const observedAnswerOf = (answer: DecisionModel.ProviderAnswer): Effect.Effect<P
 
 const recordAnswers = (
   into: ObservationStore,
-  decisions: Readonly<Record<string, Decision.Any>>,
+  decisions: Readonly<Record<string, SupportedDecision>>,
   state: Schema.Json,
   answers: Readonly<Record<string, DecisionModel.ProviderAnswer>>,
   regionPath: ReadonlyArray<string>,
@@ -183,9 +184,9 @@ const invalidObservationFailure = (error: AiError.AiError): AiError.AiError =>
   )
 
 const hitDecisionsOf = (
-  decisions: Readonly<Record<string, Decision.Any>>,
+  decisions: Readonly<Record<string, SupportedDecision>>,
   hits: Readonly<Record<string, ProviderAnswer>>,
-): Readonly<Record<string, Decision.Any>> =>
+): Readonly<Record<string, SupportedDecision>> =>
   Object.fromEntries(Object.entries(decisions).filter(([id]) => Object.hasOwn(hits, id)))
 
 /**
@@ -194,7 +195,7 @@ const hitDecisionsOf = (
  * only: the stored hits pass on unchanged, because the validator's output drops
  * the `_tag` the stored form carries.
  */
-const storedHitCheckOf = (request: DecisionModel.ProviderOptions): StoredHitCheck => (hits) => {
+const storedHitCheckOf = (request: DecisionModel.ProviderOptions<SupportedDecision>): StoredHitCheck => (hits) => {
   const decisions = hitDecisionsOf(request.decisions, hits)
   return Object.keys(decisions).length === 0
     ? Effect.void
@@ -221,7 +222,7 @@ export type Interceptor = (inner: Provider) => Provider
 
 export interface Provider {
   readonly decide: (
-    options: DecisionModel.ProviderOptions,
+    options: DecisionModel.ProviderOptions<SupportedDecision>,
   ) => Effect.Effect<DecisionModel.ProviderResponse, AiError.AiError>
 }
 
@@ -350,7 +351,7 @@ const CLASSIFY_ANSWER = { _tag: 'Classify' } as const
 const RATE_ANSWER = { _tag: 'Rate' } as const
 const PROBABILITY_ANSWER = { _tag: 'Probability' } as const
 
-const taggedOf = (decision: Decision.Any, answer: Decision.Answer<Decision.Any>) =>
+const taggedOf = (decision: SupportedDecision, answer: Decision.Answer<SupportedDecision>) =>
   Match.value(decision).pipe(
     Match.tag('Classify', () => ({ ...CLASSIFY_ANSWER, ...answer })),
     Match.tag('Rate', () => ({ ...RATE_ANSWER, ...answer })),
@@ -360,8 +361,8 @@ const taggedOf = (decision: Decision.Any, answer: Decision.Answer<Decision.Any>)
 
 const answerEntryOf = (
   id: string,
-  decision: Decision.Any,
-  answer: Decision.Answer<Decision.Any> | undefined,
+  decision: SupportedDecision,
+  answer: Decision.Answer<SupportedDecision> | undefined,
 ): Effect.Effect<readonly [string, ProviderAnswer], AiError.AiError> =>
   answer === undefined
     ? Effect.fail(unusableAnswerOf(id, 'the model returned no answer for it'))
@@ -372,8 +373,8 @@ const answerEntryOf = (
     })
 
 const providerAnswersOf = (
-  decisions: Readonly<Record<string, Decision.Any>>,
-  answers: Decision.Answers<Record<string, Decision.Any>>,
+  decisions: Readonly<Record<string, SupportedDecision>>,
+  answers: Decision.Answers<Record<string, SupportedDecision>>,
 ): Effect.Effect<Readonly<Record<string, ProviderAnswer>>, AiError.AiError> =>
   Effect.map(
     Effect.forEach(Object.entries(decisions), ([id, decision]) => answerEntryOf(id, decision, answers[id])),

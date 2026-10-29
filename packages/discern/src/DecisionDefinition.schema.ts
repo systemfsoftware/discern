@@ -1,5 +1,6 @@
 import { Match, Schema } from 'effect'
 import type * as Decision from 'effect/ai/Decision'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 
 const descriptionTextOf = (description: Decision.Description): string =>
   typeof description === 'string' ? description : JSON.stringify(description)
@@ -30,7 +31,7 @@ export const DecisionDefinition = Schema.Union([
 ]).pipe(Schema.toTaggedUnion('_tag'))
 export type DecisionDefinition = typeof DecisionDefinition.Type
 
-export const decisionDefinition = (decision: Decision.Any): DecisionDefinition =>
+export const decisionDefinition = (decision: SupportedDecision): DecisionDefinition =>
   Match.value(decision).pipe(
     Match.tag(
       'Classify',

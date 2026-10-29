@@ -1,7 +1,7 @@
 import { Schema } from 'effect'
-import type * as Decision from 'effect/ai/Decision'
 import { dual } from 'effect/Function'
 import { decisionDefinition } from './DecisionDefinition.schema.js'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 
 /**
  * The canonical digest of a value, used to key recordings, caches, and decision
@@ -69,7 +69,7 @@ export const hash = (value: Hashable): ContentAddress =>
   ContentAddress.make(digestOf(typeof value === 'string' ? value : canonicalOf(value, true)))
 
 /** Identity of a decision *definition* — instructions and criteria, not its id. */
-export const decisionFingerprint = (decision: Decision.Any): ContentAddress =>
+export const decisionFingerprint = (decision: SupportedDecision): ContentAddress =>
   ContentAddress.make(`df_${digestOf(canonicalOf(decisionDefinition(decision), false))}`)
 
 /**
@@ -79,11 +79,11 @@ export const decisionFingerprint = (decision: Decision.Any): ContentAddress =>
  * different inputs, without collisions.
  */
 export const observationAddress: {
-  (state: Schema.Json): (decision: Decision.Any) => ContentAddress
-  (decision: Decision.Any, state: Schema.Json): ContentAddress
+  (state: Schema.Json): (decision: SupportedDecision) => ContentAddress
+  (decision: SupportedDecision, state: Schema.Json): ContentAddress
 } = dual(
   2,
-  (decision: Decision.Any, state: Schema.Json): ContentAddress =>
+  (decision: SupportedDecision, state: Schema.Json): ContentAddress =>
     ContentAddress.make(
       `o_${digestOf(`${canonicalOf(decisionDefinition(decision), false)}|${canonicalOf(state, true)}`)}`,
     ),

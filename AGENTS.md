@@ -8,7 +8,7 @@ Extracted from `systemfsoftware/systemfsoftware` (core); package history came wi
 
 | Package                    | Version | Distributed |
 | -------------------------- | ------- | ----------- |
-| `@systemfsoftware/discern` | 1.1.2   | yes         |
+| `@systemfsoftware/discern` | 1.1.3   | yes         |
 
 ## Dependencies on core
 

@@ -27,6 +27,7 @@ import { distinctNodes, evaluate, preview } from './pattern.blueprint.js'
 import { refusalErrorOf } from './refusal-error.js'
 import { SelectCase, selectCase } from './select-case.workflow.js'
 import { CaseVerdict } from './select-case.workflow.js'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 import { PatternResult, statusIs, statusOf } from './Verdict.schema.js'
 
 /** One ordered case as the policy run consumes it. The builder wraps `run` once at the API edge, so the cell calls an Effect-returning closure with no lift. */
@@ -168,7 +169,7 @@ const rateOrClassifyJsonOf = (
  * the Json record is rebuilt field by field instead of re-decoding data whose
  * shape the provider contract already proves.
  */
-const jsonAnswerOf = (answer: Decision.Answer<Decision.Any>): Schema.Json => {
+const jsonAnswerOf = (answer: Decision.Answer<SupportedDecision>): Schema.Json => {
   if ('probability' in answer) return { probability: answer.probability }
   return rateOrClassifyJsonOf(answer)
 }

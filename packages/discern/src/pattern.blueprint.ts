@@ -20,11 +20,12 @@ import * as Option from 'effect/Option'
 import type * as Schema from 'effect/Schema'
 import { hash } from './ContentAddress.schema.js'
 import type { PatternAst } from './PatternAst.schema.js'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 import { andResult, matched, missed, orResult, statusIs, statusOf } from './Verdict.schema.js'
 import type { PatternResult, PatternStatus } from './Verdict.schema.js'
 
 /** The validated answers one observation batch returned, keyed by decision id. */
-export type Answers = Readonly<Record<string, Decision.Answer<Decision.Any>>>
+export type Answers = Readonly<Record<string, Decision.Answer<SupportedDecision>>>
 
 /** Options shared by every pattern constructed from a decision node or a guard. */
 export interface LeafOptions {
@@ -41,7 +42,7 @@ export interface LeafOptions {
 export interface NodeCore {
   readonly id: string
   readonly fingerprint: string
-  readonly decision: Decision.Any
+  readonly decision: SupportedDecision
   readonly schema: Schema.Constraint | undefined
 }
 

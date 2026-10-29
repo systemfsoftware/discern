@@ -49,7 +49,7 @@ export class InvalidThresholdError
  * A span names its ends in the wrong order. `low` and `high` carry the ends as
  * numbers or level names, so the refusal names both ends the caller wrote.
  */
-export class InvalidRangeError extends Schema.TaggedError<InvalidRangeError>()(
+export class InvalidRangeError extends Schema.TaggedError<InvalidRangeError, { readonly brand: unique symbol }>()(
   'InvalidRangeError',
   {
     range: Schema.String,
@@ -59,10 +59,12 @@ export class InvalidRangeError extends Schema.TaggedError<InvalidRangeError>()(
   },
 ) {}
 
-export class CalibrationValuesRefused extends Schema.TaggedError<CalibrationValuesRefused>()(
-  'CalibrationValuesRefused',
-  {},
-) {
+export class CalibrationValuesRefused
+  extends Schema.TaggedError<CalibrationValuesRefused, { readonly brand: unique symbol }>()(
+    'CalibrationValuesRefused',
+    {},
+  )
+{
   override get message(): string {
     return 'Calibration needs at least one candidate value; the list was empty'
   }
