@@ -81,6 +81,7 @@ overrides:
   effect: 4.1.0
   "@effect/platform-node": "catalog:"
   "@effect/platform-node-shared": "catalog:"
+  "@effect/tsgo": "catalog:"
   rolldown-plugin-dts: 0.28.6
   # Core packages come from the core flake's tarballs (flake.nix sfs-deps), never from a registry.
   "@systemfsoftware/differential-spec": file:.sfs-deps/differential-spec-1.0.3.tgz
