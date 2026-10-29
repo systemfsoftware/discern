@@ -84,7 +84,7 @@ export interface InvokeRequest<Input> {
  * by position, never looked up again.
  */
 export type InvokeRead<Input, Ids extends string = string, Options = InvokeOptions<Input>> =
-  & (typeof SelectRoute)['Type']
+  & Omit<(typeof SelectRoute)['Type'], 'brand'>
   & {
     readonly ranking: ReadonlyArray<RouteCandidate<Ids>>
   }

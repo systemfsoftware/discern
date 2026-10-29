@@ -6,33 +6,43 @@ import { PatternStatus } from './Verdict.schema.js'
 const EvalScoreTypeId: unique symbol = Symbol.for('@systemfsoftware/discern/EvalScore')
 type EvalScoreTypeId = typeof EvalScoreTypeId
 
-export class TruePositive extends Schema.TaggedClass<TruePositive>()('TruePositive', {}) {
+export class TruePositive
+  extends Schema.TaggedClass<TruePositive, { readonly brand: unique symbol }>()('TruePositive', {})
+{
   readonly [EvalScoreTypeId] = EvalScoreTypeId
 }
 
-export class FalsePositive extends Schema.TaggedClass<FalsePositive>()('FalsePositive', {}) {
+export class FalsePositive
+  extends Schema.TaggedClass<FalsePositive, { readonly brand: unique symbol }>()('FalsePositive', {})
+{
   readonly [EvalScoreTypeId] = EvalScoreTypeId
 }
 
-export class TrueNegative extends Schema.TaggedClass<TrueNegative>()('TrueNegative', {}) {
+export class TrueNegative
+  extends Schema.TaggedClass<TrueNegative, { readonly brand: unique symbol }>()('TrueNegative', {})
+{
   readonly [EvalScoreTypeId] = EvalScoreTypeId
 }
 
-export class FalseNegative extends Schema.TaggedClass<FalseNegative>()('FalseNegative', {}) {
+export class FalseNegative
+  extends Schema.TaggedClass<FalseNegative, { readonly brand: unique symbol }>()('FalseNegative', {})
+{
   readonly [EvalScoreTypeId] = EvalScoreTypeId
 }
 
-export class Abstained extends Schema.TaggedClass<Abstained>()('Abstained', {}) {
+export class Abstained extends Schema.TaggedClass<Abstained, { readonly brand: unique symbol }>()('Abstained', {}) {
   readonly [EvalScoreTypeId] = EvalScoreTypeId
 }
 
 export const EvalScore = Schema.Union([TruePositive, FalsePositive, TrueNegative, FalseNegative, Abstained])
 export type EvalScore = typeof EvalScore.Type
 
-export class ScoreEvalRecord extends Schema.TaggedClass<ScoreEvalRecord>()('ScoreEvalRecord', {
-  expected: Schema.Boolean,
-  status: PatternStatus,
-}) {
+export class ScoreEvalRecord
+  extends Schema.TaggedClass<ScoreEvalRecord, { readonly brand: unique symbol }>()('ScoreEvalRecord', {
+    expected: Schema.Boolean,
+    status: PatternStatus,
+  })
+{
   static readonly [Workflow.InstrumentationBrand] = {
     expected: 'app.discern.score-eval-record.expected',
   } as const

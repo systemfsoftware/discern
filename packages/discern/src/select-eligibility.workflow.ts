@@ -5,28 +5,36 @@ import * as Result from 'effect/Result'
 const EligibilityDecisionTypeId: unique symbol = Symbol.for('@systemfsoftware/discern/EligibilityDecision')
 type EligibilityDecisionTypeId = typeof EligibilityDecisionTypeId
 
-export class EligibilityQuestion extends Schema.TaggedClass<EligibilityQuestion>()('EligibilityQuestion', {
-  membership: Schema.Array(Schema.String),
-  candidates: Schema.Array(Schema.String),
-}) {
+export class EligibilityQuestion
+  extends Schema.TaggedClass<EligibilityQuestion, { readonly brand: unique symbol }>()('EligibilityQuestion', {
+    membership: Schema.Array(Schema.String),
+    candidates: Schema.Array(Schema.String),
+  })
+{
   static readonly [Workflow.InstrumentationBrand] = {} as const
 }
 
-export class NoCandidateEligible extends Schema.TaggedClass<NoCandidateEligible>()('NoCandidateEligible', {
-  membership: Schema.Array(Schema.String),
-}) {
+export class NoCandidateEligible
+  extends Schema.TaggedClass<NoCandidateEligible, { readonly brand: unique symbol }>()('NoCandidateEligible', {
+    membership: Schema.Array(Schema.String),
+  })
+{
   readonly [EligibilityDecisionTypeId] = EligibilityDecisionTypeId
 }
 
-export class SingleCandidateEligible extends Schema.TaggedClass<SingleCandidateEligible>()('SingleCandidateEligible', {
-  candidate: Schema.String,
-}) {
+export class SingleCandidateEligible
+  extends Schema.TaggedClass<SingleCandidateEligible, { readonly brand: unique symbol }>()('SingleCandidateEligible', {
+    candidate: Schema.String,
+  })
+{
   readonly [EligibilityDecisionTypeId] = EligibilityDecisionTypeId
 }
 
-export class CandidateDistribution extends Schema.TaggedClass<CandidateDistribution>()('CandidateDistribution', {
-  candidates: Schema.TupleWithRest(Schema.Tuple([Schema.String, Schema.String]), [Schema.String]),
-}) {
+export class CandidateDistribution
+  extends Schema.TaggedClass<CandidateDistribution, { readonly brand: unique symbol }>()('CandidateDistribution', {
+    candidates: Schema.TupleWithRest(Schema.Tuple([Schema.String, Schema.String]), [Schema.String]),
+  })
+{
   readonly [EligibilityDecisionTypeId] = EligibilityDecisionTypeId
 }
 

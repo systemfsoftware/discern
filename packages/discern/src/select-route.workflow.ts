@@ -10,13 +10,15 @@ type RouteDecisionTypeId = typeof RouteDecisionTypeId
  * The router picked one procedure: the leader cleared both thresholds, or
  * eligibility left only one candidate, so no model was consulted at all.
  */
-export class RouteMatched extends Schema.TaggedClass<RouteMatched>()('RouteMatched', {
-  id: Schema.String,
-  probability: Schema.Finite,
-  margin: Schema.Finite,
-  by: Schema.Literals(['model', 'elimination']),
-  ranked: Schema.Array(RouteCandidate),
-}) {
+export class RouteMatched
+  extends Schema.TaggedClass<RouteMatched, { readonly brand: unique symbol }>()('RouteMatched', {
+    id: Schema.String,
+    probability: Schema.Finite,
+    margin: Schema.Finite,
+    by: Schema.Literals(['model', 'elimination']),
+    ranked: Schema.Array(RouteCandidate),
+  })
+{
   readonly [RouteDecisionTypeId] = RouteDecisionTypeId
 }
 
@@ -25,14 +27,16 @@ export class RouteMatched extends Schema.TaggedClass<RouteMatched>()('RouteMatch
  * so a caller deciding what to do about the uncertainty sees what the router
  * saw.
  */
-export class RouteUncertain extends Schema.TaggedClass<RouteUncertain>()('RouteUncertain', {
-  reason: Schema.String,
-  ranked: Schema.Array(RouteCandidate),
-}) {
+export class RouteUncertain
+  extends Schema.TaggedClass<RouteUncertain, { readonly brand: unique symbol }>()('RouteUncertain', {
+    reason: Schema.String,
+    ranked: Schema.Array(RouteCandidate),
+  })
+{
   readonly [RouteDecisionTypeId] = RouteDecisionTypeId
 }
 
-export class RouteNone extends Schema.TaggedClass<RouteNone>()('RouteNone', {
+export class RouteNone extends Schema.TaggedClass<RouteNone, { readonly brand: unique symbol }>()('RouteNone', {
   reason: Schema.String,
 }) {
   readonly [RouteDecisionTypeId] = RouteDecisionTypeId
@@ -55,19 +59,21 @@ export type Route<Ids extends string = string> =
   | RouteUncertainOf<Ids>
   | (typeof RouteNone)['Encoded']
 
-export class NoEligible extends Schema.TaggedClass<NoEligible>()('NoEligible', {
+export class NoEligible extends Schema.TaggedClass<NoEligible, { readonly brand: unique symbol }>()('NoEligible', {
   membership: Schema.Array(Schema.String),
 }) {}
 
-export class OneEligible extends Schema.TaggedClass<OneEligible>()('OneEligible', {
+export class OneEligible extends Schema.TaggedClass<OneEligible, { readonly brand: unique symbol }>()('OneEligible', {
   candidate: RouteCandidate,
 }) {}
 
-export class ManyEligible extends Schema.TaggedClass<ManyEligible>()('ManyEligible', {
-  leader: RouteCandidate,
-  runnerUp: RouteCandidate,
-  ranked: Schema.Array(RouteCandidate),
-}) {}
+export class ManyEligible
+  extends Schema.TaggedClass<ManyEligible, { readonly brand: unique symbol }>()('ManyEligible', {
+    leader: RouteCandidate,
+    runnerUp: RouteCandidate,
+    ranked: Schema.Array(RouteCandidate),
+  })
+{}
 
 /**
  * The eligibility outcome the registry computed before anything was asked:
@@ -77,7 +83,7 @@ export class ManyEligible extends Schema.TaggedClass<ManyEligible>()('ManyEligib
 export const EligibilityOutcome = Schema.Union([NoEligible, OneEligible, ManyEligible])
 export type EligibilityOutcome = typeof EligibilityOutcome.Type
 
-export class SelectRoute extends Schema.TaggedClass<SelectRoute>()('SelectRoute', {
+export class SelectRoute extends Schema.TaggedClass<SelectRoute, { readonly brand: unique symbol }>()('SelectRoute', {
   eligibility: EligibilityOutcome,
   minProbability: Schema.Finite,
   minMargin: Schema.Finite,
