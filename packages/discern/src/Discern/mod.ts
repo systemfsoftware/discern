@@ -52,6 +52,8 @@ export type {
   PatternEvaluator,
   PatternRefusal,
   Preview,
+  RangeRefusal,
+  ThresholdRefusal,
   UncertainContext,
 } from '../pattern.blueprint.js'
 export { matched, missed, reasonOf, statusIs, statusOf, uncertain } from '../Verdict.schema.js'
@@ -77,8 +79,10 @@ export { Eval } from '../eval.js'
 export type { CalibrateOptions, EvalExample, MeasureError, SweepOptions, SweepResult } from '../measure-pattern.cell.js'
 
 export {
+  CalibrationValuesRefused,
   DecisionIdCollisionError,
   ExhaustiveMatchError,
+  InvalidRangeError,
   InvalidThresholdError,
   MeasureCommandRejected,
   MeasureInputRefused,
