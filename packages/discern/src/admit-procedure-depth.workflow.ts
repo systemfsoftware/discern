@@ -5,10 +5,12 @@ import * as Result from 'effect/Result'
 const ProcedureDepthTypeId: unique symbol = Symbol.for('@systemfsoftware/discern/ProcedureDepth')
 type ProcedureDepthTypeId = typeof ProcedureDepthTypeId
 
-export class DepthAdmitted extends Schema.TaggedClass<DepthAdmitted>()('DepthAdmitted', {
-  depth: Schema.Finite,
-  limit: Schema.Finite,
-}) {
+export class DepthAdmitted
+  extends Schema.TaggedClass<DepthAdmitted, { readonly brand: unique symbol }>()('DepthAdmitted', {
+    depth: Schema.Finite,
+    limit: Schema.Finite,
+  })
+{
   readonly [ProcedureDepthTypeId] = ProcedureDepthTypeId
 }
 
@@ -19,19 +21,23 @@ export class DepthAdmitted extends Schema.TaggedClass<DepthAdmitted>()('DepthAdm
  * bounded by the code that makes them — so the depth limit counts uncertain
  * routing invocations alone.
  */
-export class DepthExceededError extends Schema.TaggedError<DepthExceededError>()('DepthExceededError', {
-  depth: Schema.Finite,
-  limit: Schema.Finite,
-}) {
+export class DepthExceededError
+  extends Schema.TaggedError<DepthExceededError, { readonly brand: unique symbol }>()('DepthExceededError', {
+    depth: Schema.Finite,
+    limit: Schema.Finite,
+  })
+{
   override get message(): string {
     return `Procedure routing reached depth ${this.depth}, at the limit of ${this.limit}`
   }
 }
 
-export class AdmitProcedureDepth extends Schema.TaggedClass<AdmitProcedureDepth>()('AdmitProcedureDepth', {
-  depth: Schema.Finite,
-  limit: Schema.Finite,
-}) {
+export class AdmitProcedureDepth
+  extends Schema.TaggedClass<AdmitProcedureDepth, { readonly brand: unique symbol }>()('AdmitProcedureDepth', {
+    depth: Schema.Finite,
+    limit: Schema.Finite,
+  })
+{
   static readonly [Workflow.InstrumentationBrand] = {} as const
 }
 

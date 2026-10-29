@@ -5,33 +5,41 @@ import * as Result from 'effect/Result'
 const SourceSelectionTypeId: unique symbol = Symbol.for('@systemfsoftware/discern/SourceSelection')
 type SourceSelectionTypeId = typeof SourceSelectionTypeId
 
-export class AllRecorded extends Schema.TaggedClass<AllRecorded>()('AllRecorded', {}) {
+export class AllRecorded
+  extends Schema.TaggedClass<AllRecorded, { readonly brand: unique symbol }>()('AllRecorded', {})
+{
   readonly [SourceSelectionTypeId] = SourceSelectionTypeId
 }
 
-export class AskForMissing extends Schema.TaggedClass<AskForMissing>()('AskForMissing', {
-  missing: Schema.Array(Schema.String),
-}) {
+export class AskForMissing
+  extends Schema.TaggedClass<AskForMissing, { readonly brand: unique symbol }>()('AskForMissing', {
+    missing: Schema.Array(Schema.String),
+  })
+{
   readonly [SourceSelectionTypeId] = SourceSelectionTypeId
 }
 
 export const SourceSelection = Schema.Union([AllRecorded, AskForMissing])
 
-export class SelectObservationSource extends Schema.TaggedClass<SelectObservationSource>()(
-  'SelectObservationSource',
-  {
-    hitIds: Schema.Array(Schema.String),
-    missing: Schema.Array(Schema.String),
-    onMissing: Schema.Literals(['fail', 'ask']),
-  },
-) {
+export class SelectObservationSource
+  extends Schema.TaggedClass<SelectObservationSource, { readonly brand: unique symbol }>()(
+    'SelectObservationSource',
+    {
+      hitIds: Schema.Array(Schema.String),
+      missing: Schema.Array(Schema.String),
+      onMissing: Schema.Literals(['fail', 'ask']),
+    },
+  )
+{
   static readonly [Workflow.InstrumentationBrand] = { onMissing: 'app.discern.on_missing' } as const
 }
 
-export class RecordingMissing extends Schema.TaggedError<RecordingMissing>()('RecordingMissing', {
-  missing: Schema.Array(Schema.String),
-  detail: Schema.String,
-}) {
+export class RecordingMissing
+  extends Schema.TaggedError<RecordingMissing, { readonly brand: unique symbol }>()('RecordingMissing', {
+    missing: Schema.Array(Schema.String),
+    detail: Schema.String,
+  })
+{
   override get message(): string {
     return this.detail
   }

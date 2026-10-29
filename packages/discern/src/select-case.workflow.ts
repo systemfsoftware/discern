@@ -5,27 +5,35 @@ import * as Result from 'effect/Result'
 const SelectCaseDecisionTypeId: unique symbol = Symbol.for('@systemfsoftware/discern/SelectCaseDecision')
 type SelectCaseDecisionTypeId = typeof SelectCaseDecisionTypeId
 
-export class CaseSelected extends Schema.TaggedClass<CaseSelected>()('CaseSelected', {
-  caseId: Schema.String,
-}) {
+export class CaseSelected
+  extends Schema.TaggedClass<CaseSelected, { readonly brand: unique symbol }>()('CaseSelected', {
+    caseId: Schema.String,
+  })
+{
   readonly [SelectCaseDecisionTypeId] = SelectCaseDecisionTypeId
 }
 
-export class FallbackSelected extends Schema.TaggedClass<FallbackSelected>()('FallbackSelected', {}) {
+export class FallbackSelected
+  extends Schema.TaggedClass<FallbackSelected, { readonly brand: unique symbol }>()('FallbackSelected', {})
+{
   readonly [SelectCaseDecisionTypeId] = SelectCaseDecisionTypeId
 }
 
-export class UncertainHandled extends Schema.TaggedClass<UncertainHandled>()('UncertainHandled', {
-  caseId: Schema.String,
-  reason: Schema.String,
-}) {
+export class UncertainHandled
+  extends Schema.TaggedClass<UncertainHandled, { readonly brand: unique symbol }>()('UncertainHandled', {
+    caseId: Schema.String,
+    reason: Schema.String,
+  })
+{
   readonly [SelectCaseDecisionTypeId] = SelectCaseDecisionTypeId
 }
 
-export class UncertainUnhandled extends Schema.TaggedError<UncertainUnhandled>()('UncertainUnhandled', {
-  caseId: Schema.String,
-  reason: Schema.String,
-}) {
+export class UncertainUnhandled
+  extends Schema.TaggedError<UncertainUnhandled, { readonly brand: unique symbol }>()('UncertainUnhandled', {
+    caseId: Schema.String,
+    reason: Schema.String,
+  })
+{
   override get message(): string {
     return `Case "${this.caseId}" was uncertain and no handler answered it`
   }
@@ -48,7 +56,7 @@ export type CaseVerdict = typeof CaseVerdict.Type
 type DecisiveCase = (typeof CaseVerdict.cases)['Match']['Type'] | (typeof CaseVerdict.cases)['Uncertain']['Type']
 type UncertainVerdict = (typeof CaseVerdict.cases)['Uncertain']['Type']
 
-export class SelectCase extends Schema.TaggedClass<SelectCase>()('SelectCase', {
+export class SelectCase extends Schema.TaggedClass<SelectCase, { readonly brand: unique symbol }>()('SelectCase', {
   cases: Schema.Array(CaseVerdict),
   hasUncertainHandler: Schema.Boolean,
 }) {

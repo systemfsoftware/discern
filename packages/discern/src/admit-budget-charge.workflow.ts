@@ -6,32 +6,38 @@ import { BudgetLimit } from './Budget.schema.js'
 const BudgetChargeTypeId: unique symbol = Symbol.for('@systemfsoftware/discern/BudgetCharge')
 type BudgetChargeTypeId = typeof BudgetChargeTypeId
 
-export class ChargeAdmitted extends Schema.TaggedClass<ChargeAdmitted>()('ChargeAdmitted', {
-  decisions: Schema.Finite,
-}) {
+export class ChargeAdmitted
+  extends Schema.TaggedClass<ChargeAdmitted, { readonly brand: unique symbol }>()('ChargeAdmitted', {
+    decisions: Schema.Finite,
+  })
+{
   readonly [BudgetChargeTypeId] = BudgetChargeTypeId
 }
 
-export class BudgetExhausted extends Schema.TaggedError<BudgetExhausted>()('BudgetExhausted', {
-  reason: Schema.String,
-  spentDecisions: Schema.Finite,
-  spentCalls: Schema.Finite,
-  requestedDecisions: Schema.Finite,
-  maxDecisions: BudgetLimit,
-  maxCalls: BudgetLimit,
-}) {
+export class BudgetExhausted
+  extends Schema.TaggedError<BudgetExhausted, { readonly brand: unique symbol }>()('BudgetExhausted', {
+    reason: Schema.String,
+    spentDecisions: Schema.Finite,
+    spentCalls: Schema.Finite,
+    requestedDecisions: Schema.Finite,
+    maxDecisions: BudgetLimit,
+    maxCalls: BudgetLimit,
+  })
+{
   override get message(): string {
     return `Budget exhausted after ${this.spentDecisions} decisions and ${this.spentCalls} calls: ${this.reason}`
   }
 }
 
-export class AdmitBudgetCharge extends Schema.TaggedClass<AdmitBudgetCharge>()('AdmitBudgetCharge', {
-  spentDecisions: Schema.Finite,
-  spentCalls: Schema.Finite,
-  requestedDecisions: Schema.Finite,
-  maxDecisions: BudgetLimit,
-  maxCalls: BudgetLimit,
-}) {
+export class AdmitBudgetCharge
+  extends Schema.TaggedClass<AdmitBudgetCharge, { readonly brand: unique symbol }>()('AdmitBudgetCharge', {
+    spentDecisions: Schema.Finite,
+    spentCalls: Schema.Finite,
+    requestedDecisions: Schema.Finite,
+    maxDecisions: BudgetLimit,
+    maxCalls: BudgetLimit,
+  })
+{
   static readonly [Workflow.InstrumentationBrand] = {
     requestedDecisions: 'app.discern.requested_decisions',
   } as const

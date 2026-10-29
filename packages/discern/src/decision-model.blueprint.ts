@@ -235,11 +235,10 @@ export const recording = (into: ObservationStore): Interceptor => (inner) =>
     Effect.flatMap(
       CurrentRegion.useSync((path) => path),
       (regionPath) =>
-        Effect.flatMap(inner.decide(options), (response) =>
-          Effect.as(
-            recordAnswers(into, options.decisions, options.state, response.answers, regionPath),
-            response,
-          )),
+        Effect.tap(
+          inner.decide(options),
+          (response) => recordAnswers(into, options.decisions, options.state, response.answers, regionPath),
+        ),
     )
   )
 

@@ -37,24 +37,28 @@ export const Observations = Schema.Struct({
 })
 export type Observations = typeof Observations.Type
 
-export class UnsupportedObservationFormatError extends Schema.TaggedError<UnsupportedObservationFormatError>()(
-  'UnsupportedObservationFormatError',
-  {
-    version: Schema.Finite,
-    detail: Schema.String,
-  },
-) {
+export class UnsupportedObservationFormatError
+  extends Schema.TaggedError<UnsupportedObservationFormatError, { readonly brand: unique symbol }>()(
+    'UnsupportedObservationFormatError',
+    {
+      version: Schema.Finite,
+      detail: Schema.String,
+    },
+  )
+{
   override get message(): string {
     return `Observation snapshot version ${this.version} is unsupported: ${this.detail}`
   }
 }
 
-export class MalformedObservationSnapshotError extends Schema.TaggedError<MalformedObservationSnapshotError>()(
-  'MalformedObservationSnapshotError',
-  {
-    detail: Schema.String,
-  },
-) {
+export class MalformedObservationSnapshotError
+  extends Schema.TaggedError<MalformedObservationSnapshotError, { readonly brand: unique symbol }>()(
+    'MalformedObservationSnapshotError',
+    {
+      detail: Schema.String,
+    },
+  )
+{
   override get message(): string {
     return `The observation snapshot is malformed: ${this.detail}`
   }
