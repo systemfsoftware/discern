@@ -1,0 +1,107 @@
+{
+  "name": "@systemfsoftware/discern",
+  "license": "Apache-2.0",
+  "version": "1.1.2",
+  "author": "Ryan Lee <drdgvhbh@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/systemfsoftware/discern.git",
+    "directory": "packages/discern"
+  },
+  "homepage": "https://github.com/systemfsoftware/discern/tree/main/packages/discern#readme",
+  "bugs": "https://github.com/systemfsoftware/discern/issues",
+  "description": "Uncertainty-aware semantic pattern matching and control flow for Effect — forked under systemfsoftware from doeixd/discern.",
+  "keywords": [
+    "effect",
+    "effect-ts",
+    "decision-model",
+    "pattern-matching",
+    "uncertainty",
+    "classification",
+    "semantic-routing",
+    "control-flow",
+    "typescript"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "@systemfsoftware/source": "./src/mod.ts",
+      "types": "./dist/mod.d.ts",
+      "default": "./dist/mod.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown -l warn && pnpm api:check",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "mutation": "stryker run",
+    "lint": "f=${OXLINT_FORMAT:-${AGENT:+agent}}; oxlint . --format=${f:-default}",
+    "test:types": "TSTYCHE_TYPESCRIPT_MODULE=tstyche-typescript tstyche",
+    "attw": "attw --pack .",
+    "api:check": "api-extractor-quiet run",
+    "api:update": "api-extractor run --local"
+  },
+  "dependencies": {
+    "@systemfsoftware/effect-cell-types": "^12.0.2"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "catalog:",
+    "@systemfsoftware/arethetypeswrong-cli": "catalog:",
+    "@systemfsoftware/differential-spec": "^1.0.3",
+    "@systemfsoftware/effect-gherkin-spec": "^8.0.0",
+    "@systemfsoftware/effect-schema-law": "^6.1.0",
+    "@systemfsoftware/effect-schema-vite": "^3.1.1",
+    "@systemfsoftware/oxlint-config-recommended": "^5.0.0",
+    "@systemfsoftware/stryker-config": "^0.2.0",
+    "@systemfsoftware/stryker-ignorer-effect-schema-declarations": "catalog:stryker",
+    "@systemfsoftware/stryker-ignorer-in-source-vitest-block": "catalog:stryker",
+    "@systemfsoftware/stryker-js": "catalog:stryker",
+    "@systemfsoftware/stryker-js-typescript-checker": "catalog:stryker",
+    "@systemfsoftware/stryker-js-vitest-runner": "catalog:stryker",
+    "@systemfsoftware/tsconfig": "^2.0.2",
+    "@systemfsoftware/tsdown-config": "^0.1.1",
+    "@systemfsoftware/vitest": "^3.0.0",
+    "@systemfsoftware/vitest-config": "^0.1.1",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "effect": "catalog:",
+    "fast-check": "catalog:",
+    "oxlint": "catalog:oxlint",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "tstyche": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "effect": "catalog:peers"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/mod.d.ts",
+        "default": "./dist/mod.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "provenance": true
+  },
+  "inlinedDependencies": {
+    "@effect/platform-node": "4.0.7",
+    "@effect/platform-node-shared": "4.0.7",
+    "@jridgewell/sourcemap-codec": "1.6.0",
+    "@systemfsoftware/vitest": "3.0.0",
+    "chai": "6.3.0",
+    "expect-type": "1.4.0",
+    "magic-string": "1.4.5",
+    "tinybench": "6.2.2",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}
