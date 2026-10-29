@@ -59,7 +59,7 @@ export const routingAnswer = ({ preferences, decision }: RoutingAnswerOptions): 
 export const routingTo = (preferences: RoutingPreferences): AnswerFor => (request) =>
   answersFor({ request, answerOf: (decision) => routingAnswer({ preferences, decision }) })
 
-const labelsIn = (request: DecisionModel.ProviderOptions): ReadonlyArray<string> =>
+const labelsIn = (request: DecisionModel.ProviderOptions<Discern.AnyDecision>): ReadonlyArray<string> =>
   Arr.flatten(
     Arr.flatMap(Object.values(request.decisions), (decision) =>
       Match.value(decision).pipe(

@@ -11,11 +11,11 @@ export class CountingModel extends Context.Service<CountingModel, {
 }>()('@systemfsoftware/discern/tests/CountingModel') {}
 
 export type AnswerFor = (
-  request: DecisionModel.ProviderOptions,
+  request: DecisionModel.ProviderOptions<Discern.AnyDecision>,
 ) => Readonly<Record<string, DecisionModel.ProviderAnswer>>
 
 interface AnswersForOptions {
-  readonly request: DecisionModel.ProviderOptions
+  readonly request: DecisionModel.ProviderOptions<Discern.AnyDecision>
   readonly answerOf: (decision: Discern.AnyDecision, id: string) => DecisionModel.ProviderAnswer
 }
 

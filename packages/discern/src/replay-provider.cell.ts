@@ -1,14 +1,14 @@
 import { Sandwich } from '@systemfsoftware/effect-cell-types'
 import * as AiError from 'effect/ai/AiError'
-import type * as Decision from 'effect/ai/Decision'
 import type * as DecisionModel from 'effect/ai/DecisionModel'
 import * as Effect from 'effect/Effect'
 import type { ObservationSplit, Provider, StoredHitCheck } from './decision-model.blueprint.js'
 import type { ProviderAnswer } from './Observation.schema.js'
 import { SelectObservationSource, selectObservationSource } from './select-observation-source.workflow.js'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 
 export interface ReplayRequest {
-  readonly options: DecisionModel.ProviderOptions
+  readonly options: DecisionModel.ProviderOptions<SupportedDecision>
   readonly inner: Provider
   readonly split: ObservationSplit
   readonly onMissing: 'fail' | 'ask'
@@ -17,7 +17,7 @@ export interface ReplayRequest {
 
 export type ReplayRead = (typeof SelectObservationSource)['Encoded'] & {
   readonly hits: Readonly<Record<string, ProviderAnswer>>
-  readonly missingDecisions: Readonly<Record<string, Decision.Any>>
+  readonly missingDecisions: Readonly<Record<string, SupportedDecision>>
   readonly state: DecisionModel.ProviderOptions['state']
   readonly inner: Provider
   readonly validate: StoredHitCheck

@@ -5,15 +5,16 @@ import * as Effect from 'effect/Effect'
 import { AdmitBudgetCharge, admitBudgetCharge } from './admit-budget-charge.workflow.js'
 import { type Budget, chargeBudget, spent } from './budget.handle.js'
 import type { Provider } from './decision-model.blueprint.js'
+import type { SupportedDecision } from './SupportedDecision.schema.js'
 
 export interface BudgetRequest {
-  readonly options: DecisionModel.ProviderOptions
+  readonly options: DecisionModel.ProviderOptions<SupportedDecision>
   readonly inner: Provider
   readonly budget: Budget
 }
 
 export type BudgetRead = (typeof AdmitBudgetCharge)['Encoded'] & {
-  readonly options: DecisionModel.ProviderOptions
+  readonly options: DecisionModel.ProviderOptions<SupportedDecision>
   readonly inner: Provider
   readonly budget: Budget
 }
