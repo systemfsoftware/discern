@@ -72,7 +72,7 @@ catalogs:
     "@systemfsoftware/stryker-js-typescript-checker": latest
     "@systemfsoftware/stryker-js-vitest-runner": latest
     "mutation-testing-elements": 3.9.0
-minimumReleaseAge: 1440
+minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
   - effect
   - "@effect/*"
@@ -125,6 +125,3 @@ supportedArchitectures:
   os: [linux]
   cpu: [x64, arm64]
   libc: [glibc]
-versioning:
-  changelog:
-    storage: repository
