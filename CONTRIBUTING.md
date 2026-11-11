@@ -11,13 +11,12 @@ Development requires the repository's Nix flake and dev shell. The dev shell pro
 
 ## Source Setup
 
-Core dependencies are pinned by `flake.nix` and consumed as local tarballs rather than fetched from a registry. The repository's `pnpm-workspace.yaml` maps these dependencies to `file:.sfs-deps/*.tgz` overrides.
+nix.systemfsoftware.com is the package registry for `@systemfsoftware` packages: producers push package tarballs there from `main`, consumers substitute them through flake inputs, and nothing goes to npm. Core's tarballs reach this repository through the `core` flake input, and `pnpm-workspace.yaml` maps them to `file:.deps/*.tgz` overrides.
 
-To build the local dependency tarballs and install workspace packages, run:
+To copy the tarballs into `.deps/` and install workspace packages, run:
 
 ```sh
-mkdir -p .sfs-deps && cp -L --no-preserve=mode "$(nix build --no-link --print-out-paths .#sfs-deps)"/*.tgz .sfs-deps/
-pnpm install
+nix develop --accept-flake-config --command pnpm install
 ```
 
 ## Running Package Commands

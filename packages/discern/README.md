@@ -6,9 +6,7 @@ A policy asks every question it needs in one model call. Its answers can be reco
 
 ## Install
 
-```sh
-pnpm add @systemfsoftware/discern 'effect@^4'
-```
+nix.systemfsoftware.com is the package registry for `@systemfsoftware` packages: producers push package tarballs there from `main`, consumers substitute them through flake inputs, and nothing goes to npm. Consume this package from that registry through a flake input.
 
 `effect` is a peer dependency: this package declares it but does not install it, so one copy is shared with the rest of your project.
 

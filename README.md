@@ -12,11 +12,7 @@ This repository manages the following package:
 
 ## Installation
 
-The published consumer artifact is version 1.0.0. You can install it alongside Effect v4:
-
-```sh
-npm install @systemfsoftware/discern@1.0.0 'effect@^4'
-```
+nix.systemfsoftware.com is the package registry for `@systemfsoftware` packages: producers push package tarballs there from `main`, consumers substitute them through flake inputs, and nothing goes to npm. Consume `@systemfsoftware/discern` from that registry through a flake input, and install Effect v4 beside it (`effect@^4` is a peer dependency).
 
 ## Quick Start
 
