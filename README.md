@@ -1,22 +1,72 @@
 # discern
 
-discern provides uncertainty-aware semantic pattern matching and control flow for Effect. It allows developers to evaluate inputs against classification, rating, probability, and deterministic criteria, compose them using logical operators, and explicitly branch on whether an outcome matches, misses, or remains uncertain.
+discern is a TypeScript library for [Effect](https://effect.website) that lets a program branch on model judgments. You describe what to decide about an input (a label, a rating, or a probability), combine those criteria with `and`, `or` and `when`, and the result is one of three verdicts: the condition matched, missed, or could not be resolved. The uncertain case is a value you handle, not one that gets silently coerced into a yes or a no.
 
-The repository is a TypeScript and ESM monorepo forked under systemfsoftware from [doeixd/discern](https://github.com/doeixd/discern).
+## Install
 
-## Repository Package Map
+`@systemfsoftware/discern` is not on npm. Packages of the `@systemfsoftware` scope are distributed as Nix tarballs from [nix.systemfsoftware.com](https://nix.systemfsoftware.com), the registry for these packages, and nothing is published to npm.
 
-This repository manages the following package:
+Add this repository as a flake input and take its tarball through [pnpm-release-management](https://github.com/systemfsoftware/pnpm-release-management#distribution-through-nix):
 
-- [`packages/discern`](packages/discern): Contains the source code for `@systemfsoftware/discern` (current source version: 1.1.3). For API reference, procedure routing, recording and replay, caching, budgets, and evaluation workflows, see [`packages/discern/README.md`](packages/discern/README.md).
+```nix
+{
+  nixConfig = {
+    extra-substituters = "https://nix.systemfsoftware.com";
+    extra-trusted-public-keys = "nix-cache-1:wXA8I4DayNW9q6enUyQA/P/nT38pGSTLt374t3gsn7M=";
+    fallback = true;
+  };
 
-## Installation
+  inputs = {
+    nixpkgs.follows = "discern/nixpkgs";
+    discern.url = "github:systemfsoftware/discern/<rev>";
+    pnpm-release-management.url = "github:systemfsoftware/pnpm-release-management";
+  };
 
-nix.systemfsoftware.com is the package registry for `@systemfsoftware` packages: producers push package tarballs there from `main`, consumers substitute them through flake inputs, and nothing goes to npm. Consume `@systemfsoftware/discern` from that registry through a flake input, and install Effect v4 beside it (`effect@^4` is a peer dependency).
+  outputs = { self, nixpkgs, discern, pnpm-release-management }:
+    let
+      lib = nixpkgs.lib;
+      forEachSystem = fn: lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (system: fn nixpkgs.legacyPackages.${system});
+    in
+    {
+      packages = forEachSystem (pkgs: rec {
+        producer-tarballs = pnpm-release-management.lib.mkProducerTarballs {
+          inherit pkgs;
+          producers = { inherit discern; };
+        };
+        pnpm-store = pnpm-release-management.lib.mkPnpmConsumerStore {
+          inherit pkgs;
+          src = self;
+          files.".deps" = producer-tarballs;
+        };
+      });
 
-## Quick Start
+      devShells = forEachSystem (pkgs: {
+        default = pkgs.mkShell {
+          shellHook = self.packages.${pkgs.stdenv.hostPlatform.system}.producer-tarballs.shellHook;
+        };
+      });
+    };
+}
+```
 
-The following example demonstrates a review policy evaluated against a stand-in Effect DecisionModel provider. This allows you to run the flow locally without configuring external model credentials:
+Replace `<rev>` with the commit you pin. Nix only applies `nixConfig` for trusted users or with `--accept-flake-config`.
+
+Then point your `package.json` at the tarball and install the peer from npm:
+
+```json
+{
+  "dependencies": {
+    "@systemfsoftware/discern": "file:.deps/discern.tgz",
+    "effect": "^4"
+  }
+}
+```
+
+Add `.deps/` to `.gitignore`. Run `pnpm install` inside the dev shell.
+
+## Quick start
+
+The example below runs locally. It uses a stand-in model provider, so it needs no model credentials.
 
 ```js
 import { Discern } from '@systemfsoftware/discern'
@@ -62,26 +112,28 @@ Expected output:
 block: rename User.id to User.key
 ```
 
-## Pattern Matching and Uncertainty
+The classification and the probability are asked in one provider request. The `and` clause matches only when both hold, so the first `when` blocks the change and the second one only writes a migration note.
 
-Policies compose classification, rating, probability, and deterministic conditions using combinators such as `and`, `or`, and `when`. In the quick start example, the classification and probability criteria are evaluated in a single model-provider request.
+## How verdicts work
 
-Pattern evaluations resolve to one of three states:
+Each condition resolves to one of three states:
 
-- `Match`: The condition was met.
-- `Miss`: The condition was not met.
-- `Uncertain`: The model or heuristic evaluation cannot definitively resolve the condition.
+- `Match`: the condition was met.
+- `Miss`: the condition was not met.
+- `Uncertain`: the model or heuristic could not decide.
 
-Rather than coercing uncertainty silently into a match or miss, discern exposes uncertainty directly in control flow.
+`Discern.onUncertain` gives the uncertain case its own handler. Model access, replay, caching and budgets are bound at the caller's edge with a `Discern.Model` layer. The [package README](packages/discern/README.md) covers the API, procedure routing, recording and replay, caching, budgets and evaluation.
 
-## Contributing and Issues
+## Repository
 
-For local development setup, environment prerequisites, and repository conventions, consult [CONTRIBUTING.md](CONTRIBUTING.md).
+This repository holds one package, [`packages/discern`](packages/discern), which is the source of `@systemfsoftware/discern`.
 
-For bug reports, feature requests, and support, open an [issue](https://github.com/systemfsoftware/discern/issues).
+## Contributing and support
+
+Development setup, the gate and repository conventions are in [CONTRIBUTING.md](CONTRIBUTING.md). Report bugs and request features in the [issue tracker](https://github.com/systemfsoftware/discern/issues).
 
 ## License
 
-This project is licensed under the Apache-2.0 License. See [`packages/discern/LICENSE`](packages/discern/LICENSE) for the full license text.
+Apache-2.0. See [`packages/discern/LICENSE`](packages/discern/LICENSE).
 
-Forked from [doeixd/discern](https://github.com/doeixd/discern).
+discern is forked from [doeixd/discern](https://github.com/doeixd/discern).
