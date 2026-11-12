@@ -79,7 +79,6 @@ minimumReleaseAgeExclude:
   - "@systemfsoftware/*"
 overrides:
   "@effect/tsgo": "catalog:"
-  rolldown-plugin-dts: 0.28.6
   # Core packages are core's tarballs, taken whole through the flake (producer-tarballs); see AGENTS.md.
   "@systemfsoftware/conformance-spec@*": file:.deps/conformance-spec.tgz
   "@systemfsoftware/differential-spec@*": file:.deps/differential-spec.tgz
@@ -119,8 +118,6 @@ overrides:
   esbuild: ^0.28.2
 packages:
   - packages/*
-patchedDependencies:
-  rolldown-plugin-dts@0.28.6: patches/rolldown-plugin-dts@0.28.6.patch
 supportedArchitectures:
   os: [linux]
   cpu: [x64, arm64]
