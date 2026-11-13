@@ -29,7 +29,7 @@ nix develop --accept-flake-config --command pnpm install
 
 - `pnpm check:local` before delivery: dprint, build, lint, typecheck, type tests, API reports, attw, tests at the
   local conformance profile.
-- CI (`.github/workflows/ci.yml`, SYS-1369) calls core's reusable checks at a pinned core commit. It runs on every
+- CI (`.github/workflows/ci.yml`) calls core's reusable checks at a pinned core commit. It runs on every
   pull request, including stacked ones. A pull request runs the static lane and the affected tests
   (`.github/ci/pr-tests.mjs`: `turbo --affected`, `vitest --changed`) and no packed test job. A Mergify queue draft
   (`mergify/merge-queue/*`) runs the full suite: the static lane and every package's whole suite. Main runs the full
