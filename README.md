@@ -4,64 +4,11 @@ discern is a TypeScript library for [Effect](https://effect.website) that lets a
 
 ## Install
 
-`@systemfsoftware/discern` is not on npm. Packages of the `@systemfsoftware` scope are distributed as Nix tarballs from [nix.systemfsoftware.com](https://nix.systemfsoftware.com), the registry for these packages, and nothing is published to npm.
-
-Add this repository as a flake input and take its tarball through [pnpm-release-management](https://github.com/systemfsoftware/pnpm-release-management#distribution-through-nix):
-
-```nix
-{
-  nixConfig = {
-    extra-substituters = "https://nix.systemfsoftware.com";
-    extra-trusted-public-keys = "nix-cache-1:wXA8I4DayNW9q6enUyQA/P/nT38pGSTLt374t3gsn7M=";
-  };
-
-  inputs = {
-    nixpkgs.follows = "discern/nixpkgs";
-    discern.url = "github:systemfsoftware/discern/<rev>";
-    pnpm-release-management.url = "github:systemfsoftware/pnpm-release-management";
-  };
-
-  outputs = { self, nixpkgs, discern, pnpm-release-management }:
-    let
-      lib = nixpkgs.lib;
-      forEachSystem = fn: lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (system: fn nixpkgs.legacyPackages.${system});
-    in
-    {
-      packages = forEachSystem (pkgs: rec {
-        producer-tarballs = pnpm-release-management.lib.mkProducerTarballs {
-          inherit pkgs;
-          producers = { inherit discern; };
-        };
-        pnpm-store = pnpm-release-management.lib.mkPnpmConsumerStore {
-          inherit pkgs;
-          src = self;
-          files.".deps" = producer-tarballs;
-        };
-      });
-
-      devShells = forEachSystem (pkgs: {
-        default = pkgs.mkShell {
-          shellHook = self.packages.${pkgs.stdenv.hostPlatform.system}.producer-tarballs.shellHook;
-        };
-      });
-    };
-}
+```sh
+pnpm add @systemfsoftware/discern effect
 ```
 
-Replace `<rev>` with the commit you pin. Nix only applies `nixConfig` for trusted users or with `--accept-flake-config`.
-
-Then point your `package.json` at the tarball and install the peer from npm:
-
-```json
-{
-  "dependencies": {
-    "@systemfsoftware/discern": "file:.deps/discern.tgz",
-    "effect": "^4"
-  }
-}
-```
-
-Add `.deps/` to `.gitignore`. Run `pnpm install` inside the dev shell.
+`effect@^4` is a peer dependency: you bring your own.
 
 ## Quick start
 
