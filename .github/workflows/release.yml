@@ -13,13 +13,15 @@ permissions:
   actions: write
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
     if: github.ref == 'refs/heads/main'
-    uses: systemfsoftware/pnpm-release-management/.github/workflows/release.yml@7c976f10f0233a671caa340c5b20f9c2acaab433
+    uses: systemfsoftware/pnpm-release-management/.github/workflows/release.yml@776c7b54f16798c13a9cb315fa53d350f9ca4102
     with:
       ci-workflow: ci.yml
+      npm-publish: true
   noop:
     name: no release off main, so the run concludes success, not skipped
     if: github.ref != 'refs/heads/main'
