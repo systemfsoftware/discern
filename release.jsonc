@@ -1,8 +1,7 @@
 {
-  // Read by systemfsoftware/pnpm-release-management's release tools, which the
-  // reusable workflows in .github/workflows/ run. Each package is versioned
-  // through its change intents, tagged <pkg>@vX.Y.Z and released on GitHub;
-  // nothing is published to an npm registry.
+  // Read by the release tools in systemfsoftware/pnpm-release-management.
+  // Each package is versioned through its change intents, tagged <pkg>@vX.Y.Z
+  // and released on GitHub, and published to npm through trusted publishing.
   "base": "main",
   "branch": "changeset-release/main",
   "versioning": {
